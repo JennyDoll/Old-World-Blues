@@ -163,7 +163,7 @@
 				rand_damage = 5
 
 			// Process evasion and blocking
-			var/miss_type = 0
+			var/miss_type
 			var/attack_message
 			if(!accurate)
 				/* ~Hubblenaut
@@ -230,7 +230,7 @@
 						"Was missed by [key_name(src)]",
 						"has missed"
 					)
-				else
+				if(2)
 					admin_attack_log(H, src,
 						"Blocked [key_name(src)]",
 						"Has blocked by [key_name(src)]",
