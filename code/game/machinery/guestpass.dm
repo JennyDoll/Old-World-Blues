@@ -110,7 +110,7 @@
 				if (A in accesses)
 					area = "<b>[area]</b>"
 				dat += "<a href='?src=\ref[src];choice=access;access=[A]'>[area]</a><br>"
-		dat += "<br><a href='?src=\ref[src];action=issue'>Issue pass</a><br>"
+		user << browse("<html><head><meta charset=\"utf-8\"></head><body>[dat]</body></html>", "window=guestpass;size=400x520")
 
 	user << browse(dat, "window=guestpass;size=400x520")
 	onclose(user, "guestpass")

@@ -36,7 +36,7 @@
 
 	return 1
 
-/turf/proc/Cross(atom/movable/mover, turf/target, height=1.5, air_group = 0)
+/turf/Cross(atom/movable/mover, turf/target, height=1.5, air_group = 0)
 	if(!target)
 		return 0
 

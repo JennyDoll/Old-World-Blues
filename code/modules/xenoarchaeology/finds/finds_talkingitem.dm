@@ -22,7 +22,7 @@
 	if(holder_atom)
 		processing_objects.Add(src)
 
-/datum/talking_atom/process()
+/datum/talking_atom/proc/process()
 	if(!holder_atom)
 		processing_objects.Remove(src)
 
@@ -50,12 +50,12 @@
 		var/next = Xa + 1
 		if(heard_words.len > 20 + rand(10,20))
 			heard_words.Remove(heard_words[1])
-		if(!heard_words["[rlowertext(seperate[Xa])]"])
-			heard_words["[rlowertext(seperate[Xa])]"] = list()
-		var/list/w = heard_words["[rlowertext(seperate[Xa])]"]
+		if(!heard_words["[lowertext(seperate[Xa])]"])
+			heard_words["[lowertext(seperate[Xa])]"] = list()
+		var/list/w = heard_words["[lowertext(seperate[Xa])]"]
 		if(w)
-			w.Add("[rlowertext(seperate[next])]")
-		//world << "Adding [rlowertext(seperate[next])] to [rlowertext(seperate[Xa])]"
+			w.Add("[lowertext(seperate[next])]")
+		//world << "Adding [lowertext(seperate[next])] to [lowertext(seperate[Xa])]"
 
 	if(prob(30))
 		var/list/options = list("[holder_atom] seems to be listening intently to [source]...",\
@@ -70,7 +70,7 @@
 /*/obj/item/weapon/talkingcrystal/proc/debug()
 	//set src in view()
 	for(var/v in heard_words)
-		world << "[ruppertext(v)]"
+		world << "[uppertext(v)]"
 		var/list/d = heard_words["[v]"]
 		for(var/X in d)
 			world << "[X]"*/
@@ -86,8 +86,8 @@
 		text = "[pick(heard_words)]"
 	else
 		text = pick(splittext(word, " "))
-	if(lentext(text)==1)
-		text=ruppertext(text)
+	if(length(text)==1)
+		text=uppertext(text)
 	else
 		text=capitalize(text)
 	var/q = 0
@@ -95,7 +95,7 @@
 	if(msg=="What" | msg == "Who" | msg == "How" | msg == "Why" | msg == "Are")
 		q=1
 
-	text=rlowertext(text)
+	text=lowertext(text)
 	for(var/ya,ya <= limit,ya++)
 
 		if(heard_words.Find("[text]"))

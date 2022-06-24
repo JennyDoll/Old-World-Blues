@@ -80,7 +80,7 @@
 
 	dat += "</b></center>"
 
-	user << browse(dat, "window=arcade")
+	user << browse("<html><head><meta charset=\"utf-8\"></head><body>[dat]</body></html>", "window=arcade")
 	onclose(user, "arcade")
 	return
 

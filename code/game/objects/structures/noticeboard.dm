@@ -41,7 +41,7 @@
 		var/dat = "<B>Noticeboard</B><BR>"
 		for(var/obj/item/weapon/paper/P in src)
 			dat += "<A href='?src=\ref[src];read=\ref[P]'>[P.name]</A> <A href='?src=\ref[src];write=\ref[P]'>Write</A> <A href='?src=\ref[src];remove=\ref[P]'>Remove</A><BR>"
-		user << browse("<HEAD><TITLE>Notices</TITLE></HEAD>[dat]","window=noticeboard")
+		user << browse("<HEAD><META CHARSET=\"UTF-8\"><TITLE>Notices</TITLE></HEAD>[dat]","window=noticeboard")
 		onclose(user, "noticeboard")
 	else
 		..()
@@ -59,6 +59,7 @@
 			add_fingerprint(usr)
 			notices--
 			icon_state = "nboard0[notices]"
+			examine(usr)
 	if(href_list["write"])
 		if((usr.stat || usr.restrained())) //For when a player is handcuffed while they have the notice window open
 			return
@@ -76,6 +77,5 @@
 	if(href_list["read"])
 		var/obj/item/weapon/paper/P = locate(href_list["read"])
 		if((P && P.loc == src))
-			usr << browse("<HTML><HEAD><TITLE>[P.name]</TITLE></HEAD><BODY><TT>[P.info]</TT></BODY></HTML>", "window=[P.name]")
-			onclose(usr, "[P.name]")
+			P.show_content(usr)
 	return

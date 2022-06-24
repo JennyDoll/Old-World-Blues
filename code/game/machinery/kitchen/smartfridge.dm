@@ -51,9 +51,7 @@
 	icon_off = "seeds-off"
 
 /obj/machinery/smartfridge/seeds/accept_check(var/obj/item/O as obj)
-	if(istype(O,/obj/item/seeds/))
-		return 1
-	return 0
+	return istype(O,/obj/item/seeds/)
 
 /obj/machinery/smartfridge/secure/extract
 	name = "\improper Biological Sample Storage"
@@ -61,9 +59,7 @@
 	req_access = list(access_research)
 
 /obj/machinery/smartfridge/secure/extract/accept_check(var/obj/item/O as obj)
-	if(istype(O,/obj/item/slime_extract))
-		return 1
-	return 0
+	return istype(O,/obj/item/slime_extract)
 
 /obj/machinery/smartfridge/secure/medbay
 	name = "\improper Refrigerated Medicine Storage"
@@ -141,8 +137,12 @@
 	desc = "A refrigerated storage unit for tasty tasty alcohol."
 
 /obj/machinery/smartfridge/drinks/accept_check(var/obj/item/O as obj)
-	if(istype(O,/obj/item/weapon/reagent_containers/glass) || istype(O,/obj/item/weapon/reagent_containers/glass/drinks) || istype(O,/obj/item/weapon/reagent_containers/condiment))
-		return 1
+	var/valid_types = list(
+		/obj/item/weapon/reagent_containers/glass,
+		/obj/item/weapon/reagent_containers/glass/drinks,
+		/obj/item/weapon/reagent_containers/condiment,
+	)
+	return is_type_in_list(O, valid_types)
 
 /obj/machinery/smartfridge/drying_rack
 	name = "\improper Drying Rack"
@@ -205,7 +205,7 @@
 		overlays.Cut()
 		if(panel_open)
 			overlays += image(icon, icon_panel)
-		SSnanoui.update_uis(src)
+		nanomanager.update_uis(src)
 		return
 
 	if(istype(O, /obj/item/device/multitool)||istype(O, /obj/item/weapon/wirecutters))
@@ -226,7 +226,7 @@
 			add_item(O)
 			user.visible_message(SPAN_NOTE("[user] has added \the [O] to \the [src]."), SPAN_NOTE("You add \the [O] to \the [src]."))
 
-			SSnanoui.update_uis(src)
+			nanomanager.update_uis(src)
 
 	else if(istype(O, /obj/item/storage/bag))
 		var/obj/item/storage/bag/P = O
@@ -249,7 +249,7 @@
 			if(P.contents.len > 0)
 				user << SPAN_NOTE("Some items are refused.")
 
-		SSnanoui.update_uis(src)
+		nanomanager.update_uis(src)
 
 	else
 		user << SPAN_NOTE("\The [src] smartly refuses [O].")
@@ -298,12 +298,12 @@
 		var/K = item_quants[i]
 		var/count = item_quants[K]
 		if(count > 0)
-			items.Add(list(list("display_name" = rhtml_encode(capitalize(K)), "vend" = i, "quantity" = count)))
+			items.Add(list(list("display_name" = html_encode(capitalize(K)), "vend" = i, "quantity" = count)))
 
 	if(items.len > 0)
 		data["contents"] = items
 
-	ui = SSnanoui.try_update_ui(user, src, ui_key, ui, data, force_open)
+	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if(!ui)
 		ui = new(user, src, ui_key, "smartfridge.tmpl", src.name, 400, 500)
 		ui.set_initial_data(data)
@@ -313,7 +313,7 @@
 	if(..()) return 0
 
 	var/mob/user = usr
-	var/datum/nanoui/ui = SSnanoui.get_open_ui(user, src, "main")
+	var/datum/nanoui/ui = nanomanager.get_open_ui(user, src, "main")
 
 	src.add_fingerprint(user)
 

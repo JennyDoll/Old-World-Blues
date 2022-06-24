@@ -1,4 +1,7 @@
 /client/proc/kaboom()
+	set name = "Kaboom"
+	set category = "Debug"
+	set desc = "Start a recursive explosion"
 	var/power = input(src, "power?", "power?") as num
 	var/turf/T = get_turf(src.mob)
 	explosion_rec(T, power)

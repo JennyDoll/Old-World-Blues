@@ -35,7 +35,7 @@
 
 /mob/living/silicon/Destroy()
 	silicon_mob_list -= src
-	for(var/datum/alarm_handler/AH in SSalarm.all_handlers)
+	for(var/datum/alarm_handler/AH in alarm_manager.all_handlers)
 		AH.unregister(src)
 	..()
 
@@ -226,7 +226,7 @@
 			else
 				default_str = " - <a href='byond://?src=\ref[src];default_lang=\ref[L]'>set default</a>"
 
-			var/key = russian_to_utf8(get_key_by_value(language_keys, L))
+			var/key = get_key_by_value(language_keys, L)
 			if(!key) key = "no key"
 			else key = ":[key]"
 

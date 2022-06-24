@@ -356,7 +356,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 /obj/item/device/pda/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = 1)
 	ui_tick++
-	var/datum/nanoui/old_ui = SSnanoui.get_open_ui(user, src, "main")
+	var/datum/nanoui/old_ui = nanomanager.get_open_ui(user, src, "main")
 	var/auto_update = 1
 	if(mode in no_auto_update)
 		auto_update = 0
@@ -536,7 +536,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	nanoUI = data
 	// update the ui if it exists, returns null if no ui is passed/found
 
-	ui = SSnanoui.try_update_ui(user, src, ui_key, ui, data, force_open)
+	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
 
 	if (!ui)
 		// the ui does not exist, so we'll create a new() one
@@ -572,7 +572,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 	..()
 	var/mob/user = usr
-	var/datum/nanoui/ui = SSnanoui.get_open_ui(user, src, "main")
+	var/datum/nanoui/ui = nanomanager.get_open_ui(user, src, "main")
 	var/mob/living/U = usr
 	//Looking for master was kind of pointless since PDAs don't appear to have one.
 	//if ((src in U.contents) || ( istype(loc, /turf) && in_range(src, U) ) )
@@ -641,7 +641,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 		if("Light")
 			if(fon)
 				fon = 0
-				kill_light()
+				set_light(0)
 			else
 				fon = 1
 				set_light(f_lum)
@@ -677,7 +677,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 			if (in_range(src, U) && loc == U)
 				n = sanitizeSafe(n, extra = 0)
 				if (mode == 1)
-					note = cp1251_to_utf8(rhtml_decode(n))
+					note = html_decode(n)
 					notehtml = note
 					note = replacetext(note, "\n", "<br>")
 			else
@@ -980,7 +980,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 	last_text = world.time
 	var/datum/reception/reception = get_reception(src, P, t)
-	t = cp1251_to_utf8(reception.message)
+	t = reception.message
 
 	if(reception.message_server && (reception.telecomms_reception & TELECOMMS_RECEPTION_SENDER)) // only send the message if it's stable
 		if(reception.telecomms_reception & TELECOMMS_RECEPTION_RECEIVER == 0) // Does our recipient have a broadcaster on their level?
@@ -1015,7 +1015,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 					ai.show_message("<i>Intercepted message from <b>[who]</b>: [t]</i>")
 
 		P.new_message_from_pda(src, t)
-		SSnanoui.update_user_uis(U, src) // Update the sending user's PDA UI so that they can see the new message
+		nanomanager.update_user_uis(U, src) // Update the sending user's PDA UI so that they can see the new message
 	else
 		U << SPAN_NOTE("ERROR: Messaging server is not responding.")
 
@@ -1035,7 +1035,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	if(L)
 		if(reception_message)
 			L << reception_message
-		SSnanoui.update_user_uis(L, src) // Update the receiving user's PDA UI so that they can see the new message
+		nanomanager.update_user_uis(L, src) // Update the receiving user's PDA UI so that they can see the new message
 
 /obj/item/device/pda/proc/new_news(var/message)
 	new_info(news_silent, newstone, news_silent ? "" : "\icon[src] <b>[message]</b>")
@@ -1051,7 +1051,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	new_message(sending_device, sending_device.owner, sending_device.ownjob, message)
 
 /obj/item/device/pda/proc/new_message(var/sending_unit, var/sender, var/sender_job, var/message)
-	var/reception_message = "\icon[src] <b>Message from [sender] ([sender_job]), </b>\"[utf8_to_cp1251(message)]\" (<a href='byond://?src=\ref[src];choice=Message;skiprefresh=1;target=\ref[sending_unit]'>Reply</a>)"
+	var/reception_message = "\icon[src] <b>Message from [sender] ([sender_job]), </b>\"[message]\" (<a href='byond://?src=\ref[src];choice=Message;skiprefresh=1;target=\ref[sending_unit]'>Reply</a>)"
 	new_info(message_silent, ttone, reception_message)
 
 	log_pda("[key_name(usr)] ([sending_unit] -> [name]) sent \"[message]\"")
@@ -1079,7 +1079,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 	if(can_use(usr))
 		mode = 0
-		SSnanoui.update_uis(src)
+		nanomanager.update_uis(src)
 		usr << SPAN_NOTE("You press the reset button on \the [src].")
 	else
 		usr << SPAN_NOTE("You cannot do this while restrained.")
@@ -1169,7 +1169,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 		cartridge = C
 		user.drop_from_inventory(cartridge, src)
 		user << SPAN_NOTE("You insert [cartridge] into [src].")
-		SSnanoui.update_uis(src) // update all UIs attached to src
+		nanomanager.update_uis(src) // update all UIs attached to src
 		if(cartridge.radio)
 			cartridge.radio.hostpda = src
 
@@ -1196,7 +1196,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 		user.drop_from_inventory(C, src)
 		pai = C
 		user << SPAN_NOTE("You slot \the [C] into [src].")
-		SSnanoui.update_uis(src) // update all UIs attached to src
+		nanomanager.update_uis(src) // update all UIs attached to src
 	else if(istype(C, /obj/item/weapon/pen))
 		var/obj/item/weapon/pen/O = locate() in src
 		if(O)

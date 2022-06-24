@@ -217,8 +217,8 @@ var/list/global/nearest_part = list(
 	return t
 
 proc/slur(phrase)
-	var/leng=lentext(phrase)
-	var/counter=lentext(phrase)
+	var/leng=length(phrase)
+	var/counter=length(phrase)
 	var/newphrase=""
 	var/newletter=""
 	while(counter>=1)
@@ -229,8 +229,8 @@ proc/slur(phrase)
 			if(lowertext(newletter)=="a")	newletter="ah"
 			if(lowertext(newletter)=="c")	newletter="k"
 		switch(rand(1,15))
-			if(1,3,5,8)	newletter="[rlowertext(newletter)]"
-			if(2,4,6,15)	newletter="[ruppertext(newletter)]"
+			if(1,3,5,8)	newletter="[lowertext(newletter)]"
+			if(2,4,6,15)	newletter="[uppertext(newletter)]"
 			if(7)	newletter+="'"
 			if(9,10)	newletter="<b>[newletter]</b>"
 			//if(11,12)	newletter="<big>[newletter]</big>"
@@ -246,7 +246,7 @@ proc/slur(phrase)
 	var/p = 1//1 is the start of any word
 	while(p <= n)//while P, which starts at 1 is less or equal to N which is the length.
 		var/n_letter = copytext(te, p, p + 1)//copies text from a certain distance. In this case, only one letter at a time.
-		if (prob(80) && (rlowertext(n_letter) in LIST_OF_CONSONANT))
+		if (prob(80) && (lowertext(n_letter) in LIST_OF_CONSONANT))
 			if (prob(10))
 				n_letter = text("[n_letter]-[n_letter]-[n_letter]-[n_letter]")//replaces the current letter with this instead.
 			else
@@ -286,7 +286,7 @@ The difference with stutter is that this proc can stutter more than 1 letter
 The issue here is that anything that does not have a space is treated as one word (in many instances). For instance, "LOOKING," is a word, including the comma.
 It's fairly easy to fix if dealing with single letters but not so much with compounds of letters./N
 */
-	var/te = rhtml_decode(n)
+	var/te = html_decode(n)
 	var/t = ""
 	n = length(n)
 	var/p = 1

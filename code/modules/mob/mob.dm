@@ -277,7 +277,7 @@
 	set src in usr
 	if(usr != src)
 		usr << "No."
-	var/msg = sanitize(input(usr,"Set the flavor text in your 'examine' verb. Can also be used for OOC notes about your character.","Flavor Text",rhtml_decode(flavor_text)) as message|null, extra = 0)
+	var/msg = sanitize(input(usr,"Set the flavor text in your 'examine' verb. Can also be used for OOC notes about your character.","Flavor Text",html_decode(flavor_text)) as message|null, extra = 0)
 
 	if(msg != null)
 		flavor_text = msg
@@ -291,7 +291,7 @@
 	if (flavor_text && flavor_text != "")
 		var/msg = trim(replacetext(flavor_text, "\n", " "))
 		if(!msg) return ""
-		if(lentext(msg) <= 40)
+		if(length(msg) <= 40)
 			return SPAN_NOTE(msg)
 		else
 			return SPAN_NOTE("[copytext_preserve_html(msg, 1, 37)]... <a href='byond://?src=\ref[src];flavor_more=1'>More...</a>")
@@ -428,7 +428,7 @@
 		src << browse(null, t1)
 
 	if(href_list["flavor_more"])
-		var/dat = cp1251_to_utf8(replacetext(flavor_text, "\n", "<BR>"))
+		var/dat = replacetext(flavor_text, "\n", "<BR>")
 		if(src in view(usr))
 			usr << browse("<html><body><tt>[dat]</tt></body></html>", "window=[name];size=500x200")
 			onclose(usr, "[name]")
@@ -547,22 +547,14 @@
 			if(statpanel("Status"))
 				stat("Location:", "([x], [y], [z]) [loc]")
 				stat("CPU:","[world.cpu]")
-				stat("Tick Usage:", world.tick_usage)
 				stat("Instances:","[world.contents.len]")
 
-			if(statpanel("MC"))
-				if(Master)
-					Master.stat_entry()
+			if(statpanel("Processes"))
+				if(processScheduler && processScheduler.getIsRunning())
+					for(var/datum/controller/process/P in processScheduler.processes)
+						stat(P.getStatName(), P.getTickTime())
 				else
-					stat("Master Controller:", "ERROR")
-				if(Failsafe)
-					Failsafe.stat_entry()
-				else
-					stat("Failsafe Controller:", "ERROR")
-				if (Master)
-					stat(null, "- Subsystems -")
-					for(var/datum/controller/subsystem/SS in Master.subsystems)
-						SS.stat_entry()
+					stat("processScheduler is not running.")
 
 		if(listed_turf && client)
 			if(!TurfAdjacent(listed_turf))

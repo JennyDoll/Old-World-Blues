@@ -32,11 +32,11 @@
 	energy = min(energy + addenergy, max_energy)
 	if(energy != oldenergy)
 		use_power(CHEM_SYNTH_ENERGY / CHEM_DISPENSER_ENERGY_COST) // This thing uses up "alot" of power (this is still low as shit for creating reagents from thin air)
-		SSnanoui.update_uis(src) // update all UIs attached to src
+		nanomanager.update_uis(src) // update all UIs attached to src
 
 /obj/machinery/chem_dispenser/power_change()
 	..()
-	SSnanoui.update_uis(src) // update all UIs attached to src
+	nanomanager.update_uis(src) // update all UIs attached to src
 
 /obj/machinery/chem_dispenser/process()
 	if(recharged <= 0)
@@ -113,7 +113,7 @@
 	data["chemicals"] = chemicals
 
 	// update the ui if it exists, returns null if no ui is passed/found
-	ui = SSnanoui.try_update_ui(user, src, ui_key, ui, data, force_open)
+	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)
 		// the ui does not exist, so we'll create a new() one
 		// for a list of parameters and their descriptions see the code docs in \code\modules\nano\nanoui.dm
@@ -168,7 +168,7 @@
 			return
 		src.beaker =  B
 		user << "You set [B] on the machine."
-		SSnanoui.update_uis(src) // update all UIs attached to src
+		nanomanager.update_uis(src) // update all UIs attached to src
 		return
 
 /obj/machinery/chem_dispenser/attack_ai(mob/user as mob)
@@ -560,10 +560,7 @@
 			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (60 units max)<a href=\"?src=\ref[src]&change_bottle=1\"><img src=\"[bottlesprite].png\" /></A>"
 		else
 			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (50 units max)</A>"
-	if(!condi)
-		user << browse("<TITLE>Chemmaster 3000</TITLE>Chemmaster menu:<BR><BR>[dat]", "window=chem_master;size=575x400")
-	else
-		user << browse("<TITLE>Condimaster 3000</TITLE>Condimaster menu:<BR><BR>[dat]", "window=chem_master;size=575x400")
+	user << browse("<html><head><meta charset=\"utf-8\"><TITLE>[name]</TITLE></head><body>Condimaster menu:<BR><BR>[dat]</body></html>", "window=chem_master;size=575x400")
 	onclose(user, "chem_master")
 	return
 

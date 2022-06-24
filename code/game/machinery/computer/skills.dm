@@ -39,16 +39,18 @@
 /obj/machinery/computer/skills/attack_hand(mob/user as mob)
 	if(..())
 		return
-	if (src.z > 6)
+	if(!isOnPlayerLevel(src))
 		user << "<span class='danger'>Unable to establish a connection:</span> You're too far away from the station!"
 		return
-	var/dat
+	var/dat = "<html><head><meta charset=\"utf-8\"></head><body>"
 
 	if (temp)
-		dat = text("<TT>[]</TT><BR><BR><A href='?src=\ref[];choice=Clear Screen'>Clear Screen</A>", temp, src)
+		dat += text("<TT>[]</TT><BR><BR><A href='?src=\ref[];choice=Clear Screen'>Clear Screen</A>", temp, src)
 	else
-		dat = text("Confirm Identity: <A href='?src=\ref[];choice=Confirm Identity'>[]</A><HR>", src, (scan ? text("[]", scan.name) : "----------"))
-		if (authenticated)
+		dat += text("Confirm Identity: <A href='?src=\ref[];choice=Confirm Identity'>[]</A><HR>", src, (scan ? text("[]", scan.name) : "----------"))
+		if (!authenticated)
+			dat += text("<A href='?src=\ref[];choice=Log In'>{Log In}</A>", src)
+		else
 			switch(screen)
 				if(1.0)
 					dat += "<p style='text-align:center;'>"
@@ -137,10 +139,7 @@
 							dat += text("<td>[]</td></tr>", crimstat)
 						dat += "</table><hr width='75%' />"
 						dat += text("<br><A href='?src=\ref[];choice=Return'>Return to index.</A>", src)
-				else
-		else
-			dat += text("<A href='?src=\ref[];choice=Log In'>{Log In}</A>", src)
-	user << browse(text("<HEAD><TITLE>Employment Records</TITLE></HEAD><TT>[]</TT>", dat), "window=secure_rec;size=600x400")
+	user << browse("<HEAD><META charset=\"utf-8\"><TITLE>Employment Records</TITLE></HEAD><TT>[dat]</TT>", "window=secure_rec;size=600x400")
 	onclose(user, "secure_rec")
 	return
 
@@ -214,7 +213,7 @@ What a mess.*/
 				if ((!( t1 ) || usr.stat || !( authenticated ) || usr.restrained() || !in_range(src, usr)))
 					return
 				Perp = new/list()
-				t1 = rlowertext(t1)
+				t1 = lowertext(t1)
 				var/list/components = splittext(t1, " ")
 				if(components.len > 5)
 					return //Lets not let them search too greedily.
@@ -251,9 +250,9 @@ What a mess.*/
 				if ((!( t1 ) || usr.stat || !( authenticated ) || usr.restrained() || (!in_range(src, usr)) && (!issilicon(usr))))
 					return
 				active1 = null
-				t1 = rlowertext(t1)
+				t1 = lowertext(t1)
 				for(var/datum/data/record/R in data_core.general)
-					if (rlowertext(R.fields["fingerprint"]) == t1)
+					if (lowertext(R.fields["fingerprint"]) == t1)
 						active1 = R
 				if (!( active1 ))
 					temp = text("Could not locate record [].", t1)

@@ -172,12 +172,13 @@
 	anchored = 1
 
 
-/obj/machinery/body_scanconsole/Initialize()
-	for(var/dir in cardinal)
-		connected = locate(/obj/machinery/bodyscanner) in get_step(src, dir)
-		if(connected)
-			break
-	return 	..()
+/obj/machinery/body_scanconsole/New()
+	..()
+	spawn(5)
+		for(var/dir in cardinal)
+			connected = locate(/obj/machinery/bodyscanner) in get_step(src, dir)
+			if(connected)
+				return
 
 /obj/machinery/body_scanconsole/attack_ai(user as mob)
 	return src.attack_hand(user)
@@ -198,7 +199,7 @@
 	if (src.delete && src.temphtml) //Window in buffer but its just simple message, so nothing
 		src.delete = src.delete
 	else if (!src.delete && src.temphtml) //Window in buffer - its a menu, dont add clear message
-		dat = text("[]<BR><BR><A href='?src=\ref[];clear=1'>Main Menu</A>", src.temphtml, src)
+		dat = "[src.temphtml]<BR><BR><A href='?src=\ref[src];clear=1'>Main Menu</A>"
 	else
 		if (src.connected) //Is something connected?
 			dat = format_occupant_data(src.connected.get_occupant_data())

@@ -40,15 +40,16 @@ var/global/list/all_objectives_types = null
 		if(possible_target!=owner && ishuman(possible_target.current) && (possible_target.current.stat != DEAD))
 			possible_targets.Add(possible_target)
 
-	for(var/datum/objective/O in owner.objectives)
-		possible_targets -= O.target
+	if(owner)
+		for(var/datum/objective/O in owner.objectives)
+			possible_targets -= O.target
 
 	return possible_targets
 
 
 /datum/objective/proc/find_target()
 	var/list/possible_targets = get_targets_list()
-	if(possible_targets.len > 0)
+	if(possible_targets && possible_targets.len > 0)
 		target = pick(possible_targets)
 	update_explanation()
 

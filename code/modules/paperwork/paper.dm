@@ -3,6 +3,11 @@
  * also scraps of paper
  */
 
+#define FORSESHOW 1
+#define FORSESTAR 2
+#define SHOWLINKS 4 + FORSESHOW
+
+
 /obj/item/weapon/paper
 	name = "sheet of paper"
 	gender = NEUTER
@@ -45,7 +50,7 @@
 		desc = "This is a paper titled '" + name + "'."
 
 	if(info != initial(info))
-		info = rhtml_encode(info)
+		info = html_encode(info)
 		info = replacetext(info, "\n", "<BR>")
 		info = parsepencode(info)
 
@@ -77,13 +82,22 @@
 		user << SPAN_NOTE("You have to go closer if you want to read it.")
 	return
 
-/obj/item/weapon/paper/proc/show_content(var/mob/user, var/forceshow=0)
-	if(!(ishuman(user) || isobserver(user) || issilicon(user)) && !forceshow)
-		user << browse("<HTML><HEAD><TITLE>[name]</TITLE></HEAD><BODY>[stars(info)][stamps]</BODY></HTML>", "window=[name]")
-		onclose(user, "[name]")
+/obj/item/weapon/paper/proc/show_content(var/mob/user, var/flags)
+	var/body
+	var/head = "<head><meta charset=utf-8><title>[name]</title></head>"
+
+	var/typecheck = ishuman(user) || isobserver(user) || issilicon(user)
+
+	if(!(flags&FORSESTAR) && ((flags&FORSESHOW) || typecheck))
+		if(flags&SHOWLINKS)
+			body = info_links
+		else
+			body = info
 	else
-		user << browse("<HTML><HEAD><TITLE>[name]</TITLE></HEAD><BODY>[info][stamps]</BODY></HTML>", "window=[name]")
-		onclose(user, "[name]")
+		body = stars(info)
+
+	user << browse("<html>[head]<body>[body][stamps]</body></html>", "window=[name]")
+	onclose(user, "[name]")
 
 /obj/item/weapon/paper/verb/rename()
 	set name = "Rename paper"
@@ -127,19 +141,13 @@
 				spam_flag = 0
 	return
 
-/obj/item/weapon/paper/attack_ai(var/mob/living/silicon/ai/user as mob)
+/obj/item/weapon/paper/attack_ai(var/mob/living/silicon/ai/user)
 	var/dist
 	if(istype(user) && user.camera) //is AI
 		dist = get_dist(src, user.camera)
 	else //cyborg or AI not seeing through a camera
 		dist = get_dist(src, user)
-	if(dist < 2)
-		usr << browse("<HTML><HEAD><TITLE>[name]</TITLE></HEAD><BODY>[info][stamps]</BODY></HTML>", "window=[name]")
-		onclose(usr, "[name]")
-	else
-		usr << browse("<HTML><HEAD><TITLE>[name]</TITLE></HEAD><BODY>[stars(info)][stamps]</BODY></HTML>", "window=[name]")
-		onclose(usr, "[name]")
-	return
+	show_content(usr, dist < 2 ? FORSESHOW : FORSESTAR)
 
 /obj/item/weapon/paper/attack(mob/living/carbon/M as mob, mob/living/carbon/user as mob)
 	if(user.zone_sel.selecting == O_EYES)
@@ -223,8 +231,6 @@
 	return (user && user.real_name) ? user.real_name : "Anonymous"
 
 /obj/item/weapon/paper/proc/parsepencode(var/t, var/obj/item/weapon/pen/P, mob/user as mob, var/iscrayon = 0)
-	t = cp1251_to_utf8(t)
-
 	t = replacetext(t, "\[center\]", "<center>")
 	t = replacetext(t, "\[/center\]", "</center>")
 	t = replacetext(t, "\[br\]", "<BR>")
@@ -385,9 +391,6 @@
 
 /obj/item/weapon/paper/attackby(obj/item/weapon/P as obj, mob/user as mob)
 	..()
-	var/clown = 0
-	if(user.mind && (user.mind.assigned_role == "Clown"))
-		clown = 1
 
 	if(istype(P, /obj/item/weapon/reagent_containers/food/snacks/grown))
 		var/obj/item/weapon/reagent_containers/food/snacks/grown/G = P
@@ -484,11 +487,6 @@
 		stampoverlay.pixel_x = x
 		stampoverlay.pixel_y = y
 
-		if(istype(P, /obj/item/weapon/stamp/clown))
-			if(!clown)
-				user << SPAN_NOTE("You are totally unable to use the stamp. HONK!")
-				return
-
 		if(!ico)
 			ico = new
 		ico += "paper_[P.icon_state]"
@@ -576,3 +574,7 @@
 
 /obj/item/weapon/paper/crumpled/bloody
 	icon_state = "scrap_bloodied"
+
+#undef FORSESHOW
+#undef FORSESTAR
+#undef SHOWLINKS6a

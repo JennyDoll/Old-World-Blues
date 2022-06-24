@@ -1,19 +1,19 @@
 //HTML ENCODE/DECODE + RUS TO CP1251 TODO: OVERRIDE html_encode after fix
-/proc/rhtml_encode(var/msg)
+/*/proc/html_encode(var/msg)
 	msg = replacetext(msg, "<", "&lt;")
 	msg = replacetext(msg, ">", "&gt;")
 	msg = replacetext(msg, "ÿ", "&#255;")
 	return msg
 
-/proc/rhtml_decode(var/msg)
+/proc/html_decode(var/msg)
 	msg = replacetext(msg, "&gt;", ">")
 	msg = replacetext(msg, "&lt;", "<")
 	msg = replacetext(msg, "&#255;", "ÿ")
 	return msg
-
-
+*/
+/*
 //UPPER/LOWER TEXT + RUS TO CP1251 TODO: OVERRIDE uppertext
-/proc/ruppertext(text as text)
+/proc/uppertext(text as text)
 	text = uppertext(text)
 	var/t = ""
 	for(var/i = 1, i <= length(text), i++)
@@ -26,7 +26,7 @@
 	t = replacetext(t,"&#255;","ß")
 	return t
 
-/proc/rlowertext(text as text)
+/proc/lowertext(text as text)
 	text = lowertext(text)
 	var/t = ""
 	for(var/i = 1, i <= length(text), i++)
@@ -37,7 +37,7 @@
 			t += ascii2text(184)
 		else t += ascii2text(a)
 	return t
-
+*/
 
 //RUS CONVERTERS
 /proc/russian_to_cp1251(var/msg)//CHATBOX
@@ -100,7 +100,7 @@ var/global/list/rkeys = list(
 
 //Transform keys from russian keyboard layout to eng analogues and lowertext it.
 /proc/sanitize_key(t)
-	t = rlowertext(t)
+	t = lowertext(t)
 	if(t in rkeys) return rkeys[t]
 	return (t)
 
@@ -111,7 +111,7 @@ var/global/list/rkeys = list(
 		s += 1
 	else if (copytext(t,1,2) == ":")
 		s += 2
-	return ruppertext(copytext(t, 1, s)) + copytext(t, s)
+	return uppertext(copytext(t, 1, s)) + copytext(t, s)
 
 /proc/intonation(text)
 	if (copytext(text,-1) == "!")

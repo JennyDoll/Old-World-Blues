@@ -277,7 +277,7 @@
 		return
 
 	user.set_machine(src)
-	var/dat = "<head><title>Communications Console</title></head><body>"
+	var/dat = "<head><meta charset=\"utf-8\"><title>Communications Console</title></head><body>"
 	if (emergency_shuttle.has_eta())
 		var/timeleft = emergency_shuttle.estimate_arrival_time()
 		dat += "<B>Emergency shuttle</B>\n<BR>\nETA: [timeleft / 60 % 60]:[add_zero(num2text(timeleft % 60), 2)]<BR>"
@@ -494,8 +494,8 @@
 
 	//delay events in case of an autotransfer
 	if (isnull(user))
-		SSevents.delay_events(EVENT_LEVEL_MODERATE, 9000) //15 minutes
-		SSevents.delay_events(EVENT_LEVEL_MAJOR, 9000)
+		event_manager.delay_events(EVENT_LEVEL_MODERATE, 9000) //15 minutes
+		event_manager.delay_events(EVENT_LEVEL_MAJOR, 9000)
 
 	log_game("[user? key_name(user) : "Autotransfer"] has called the shuttle.", user)
 

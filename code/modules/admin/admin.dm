@@ -1,4 +1,4 @@
-
+gle
 var/global/BSACooldown = 0
 var/global/floorIsLava = 0
 
@@ -27,18 +27,16 @@ var/global/floorIsLava = 0
 /datum/admins/proc/show_player_panel(var/mob/M in mob_list)
 	set category = null
 	set name = "Show Player Panel"
-	set desc="Edit player (respawn, ban, heal, etc)"
+	set desc = "Edit player (respawn, ban, heal, etc)"
 
 	if(!M)
 		usr << "You seem to be selecting a mob that doesn't exist anymore."
 		return
-	if (!istype(src,/datum/admins))
-		src = usr.client.holder
-	if (!istype(src,/datum/admins))
+	if (!check_rights())
 		usr << "Error: you are not an admin!"
 		return
 
-	var/body = "<html><head><title>Options for [M.key]</title></head>"
+	var/body = "<html><head><meta charset=utf-8><title>Options for [M.key]</title></head>"
 	body += "<body>Options panel for <b>[M]</b>"
 	if(M.client)
 		body += " played by <b>[M.client]</b> "
@@ -185,16 +183,16 @@ var/global/floorIsLava = 0
 			if(!f) body += " | "
 			else f = 0
 			if(L in M.languages)
-				body += "<a href='?src=\ref[src];toglang=\ref[M];lang=[rhtml_encode(k)]' style='color:#006600'>[k]</a>"
+				body += "<a href='?src=\ref[src];toglang=\ref[M];lang=[html_encode(k)]' style='color:#006600'>[k]</a>"
 			else
-				body += "<a href='?src=\ref[src];toglang=\ref[M];lang=[rhtml_encode(k)]' style='color:#ff0000'>[k]</a>"
+				body += "<a href='?src=\ref[src];toglang=\ref[M];lang=[html_encode(k)]' style='color:#ff0000'>[k]</a>"
 
 	body += {"<br>
 		</body></html>
 	"}
 
 	usr << browse(body, "window=adminplayeropts;size=550x515")
-
+	return
 
 /datum/player_info/var/author // admin who authored the information
 /datum/player_info/var/rank //rank of admin who made the notes
@@ -648,7 +646,7 @@ var/global/floorIsLava = 0
 	set desc="Announce your desires to the world"
 	if(!check_rights(0))	return
 
-	var/message = russian_to_cp1251(input("Global message to send:", "Admin Announce", null, null)  as message)
+	var/message = input("Global message to send:", "Admin Announce", null, null)  as message
 	if(message)
 		if(!check_rights(R_SERVER,0))
 			message = sanitize(message, 500, extra = 0)

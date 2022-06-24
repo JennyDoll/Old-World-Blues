@@ -16,7 +16,7 @@
 // Run all strings to be used in an SQL query through this proc first to properly escape out injection attempts.
 /proc/sanitizeSQL(var/t as text)
 	var/sqltext = dbcon.Quote(t);
-	return copytext(sqltext, 2, lentext(sqltext));//Quote() adds quotes around input, we already do that
+	return lentext(sqltext, 2, lentext(sqltext));//Quote() adds quotes around input, we already do that
 
 /*
  * Text sanitization
@@ -37,7 +37,7 @@
 		//In addition to processing html, html_encode removes byond formatting codes like "\red", "\i" and other.
 		//It is important to avoid double-encode text, it can "break" quotes and some other characters.
 		//Also, keep in mind that escaped characters don't work in the interface (window titles, lower left corner of the main window, etc.)
-		input = rhtml_encode(input)
+		input = html_encode(input)
 	else
 		//If not need encode text, simply remove < and >
 		//note: we can also remove here byond formatting codes: 0xFF + next byte
@@ -49,7 +49,7 @@
 
 	return input
 
-//Run sanitize(), but remove <, >, " first to prevent displaying them as &gt; &lt; &34; in some places, after rhtml_encode().
+//Run sanitize(), but remove <, >, " first to prevent displaying them as &gt; &lt; &34; in some places, after html_encode().
 //Best used for sanitize object names, window titles.
 //If you have a problem with sanitize() in chat, when quotes and >, < are displayed as html entites -
 //this is a problem of double-encode(when & becomes &amp;), use sanitize() with encode=0, but not the sanitizeSafe()!
@@ -136,7 +136,7 @@
 
 //Old variant. Haven't dared to replace in some places.
 /proc/sanitize_old(var/t,var/list/repl_chars = list("\n"="#","\t"="#"))
-	return rhtml_encode(replace_characters(t,repl_chars))
+	return html_encode(replace_characters(t,repl_chars))
 
 /*
  * Text searches
@@ -217,7 +217,7 @@
 
 //Returns a string with the first element of the string capitalized.
 /proc/capitalize(var/t as text)
-	return ruppertext(copytext(t, 1, 2)) + copytext(t, 2)
+	return uppertext(t[1]) + copytext_char(t, 2)
 
 //This proc strips html properly, remove < > and all text between
 //for complete text sanitizing should be used sanitize()
@@ -249,9 +249,9 @@
 //This is used for fingerprints
 /proc/stringmerge(var/text,var/compare,replace = "*")
 	var/newtext = text
-	if(lentext(text) != lentext(compare))
+	if(length(text) != length(compare))
 		return 0
-	for(var/i = 1, i < lentext(text), i++)
+	for(var/i = 1, i < length(text), i++)
 		var/a = copytext(text,i,i+1)
 		var/b = copytext(compare,i,i+1)
 		//if it isn't both the same letter, or if they are both the replacement character
@@ -271,7 +271,7 @@
 	if(!text || !character)
 		return 0
 	var/count = 0
-	for(var/i = 1, i <= lentext(text), i++)
+	for(var/i = 1, i <= length(text), i++)
 		var/a = copytext(text,i,i+1)
 		if(a == character)
 			count++
@@ -286,8 +286,9 @@
 //Used in preferences' SetFlavorText and human's set_flavor verb
 //Previews a string of len or less length
 proc/TextPreview(var/string,var/len=40)
-	if(lentext(string) <= len)
-		if(!lentext(string))
+	var/line_len = length_char(string)
+	if(line_len <= len)
+		if(!line_len)
 			return "\[...\]"
 		else
 			return string
@@ -296,7 +297,7 @@ proc/TextPreview(var/string,var/len=40)
 
 //alternative copytext() for encoded text, doesn't break html entities (&#34; and other)
 /proc/copytext_preserve_html(var/text, var/first, var/last)
-	return rhtml_encode(copytext(rhtml_decode(text), first, last))
+	return html_encode(copytext(html_decode(text), first, last))
 
 //For generating neat chat tag-images
 //The icon var could be local in the proc, but it's a waste of resources
@@ -315,7 +316,7 @@ proc/TextPreview(var/string,var/len=40)
 	return replacetext(replacetext(text, "\proper", ""), "\improper", "")
 
 /proc/l33t(T as text)
-//	T = ruppertext(T)
+//	T = uppertext(T)
 	var/output = ""
 	for(var/i = 1, i <= length(T), i++)
 		var/a = text2ascii(T, i)

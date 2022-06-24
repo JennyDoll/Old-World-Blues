@@ -11,7 +11,8 @@ var/datum/donations/donations = new()
 
 /hook/roundstart/proc/load_donators()
 	donations.load_donators()
-	return donations.donators.len
+	if(donations.donators)
+		return donations.donators.len
 
 /datum/donations
 	var/list/donat_categoryes = list()
@@ -27,9 +28,9 @@ var/datum/donations/donations = new()
 
 		var/money = (user.ckey in donators) ? donators[user.ckey] : "0"
 
-		var/dat = "<title>Donator panel</title>"
+		var/dat = "<meta charset=\"utf-8\"><title>Donator panel</title>"
 		dat += "You have [money] points<br>"
-		usr << browse(dat+donation_cached, "window=donatorpanel;size=250x400")
+		user << browse(dat+donation_cached, "window=donatorpanel;size=250x400")
 
 	Topic(href, href_list)
 		var/datum/donat_stuff/item = locate(href_list["item"])
@@ -67,6 +68,8 @@ var/datum/donations/donations = new()
 		show(user)
 
 	proc/load_donators()
+		if(!establish_db_connection())
+			return
 		var/DBConnection/dbcon2 = new()
 		dbcon2.Connect("dbi:mysql:forum2:[sqladdress]:[sqlport]","[sqlfdbklogin]","[sqlfdbkpass]")
 
