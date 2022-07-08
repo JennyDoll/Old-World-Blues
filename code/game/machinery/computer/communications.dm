@@ -90,7 +90,7 @@
 						//Only notify the admins if an actual change happened
 						log_game("[key_name(usr)] has changed the security level to [get_security_level()].", src)
 					tmp_alertlevel = 0
-				else:
+				else
 					usr << "You are not authorized to do this."
 					tmp_alertlevel = 0
 				state = STATE_DEFAULT
