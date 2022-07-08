@@ -167,8 +167,8 @@ var/global/datum/controller/occupations/job_master
 		return
 
 
-	///This proc is called before the level loop of DivideOccupations() and will try to select a head, \
-	ignoring ALL non-head preferences for every level until it locates a head or runs out of levels to check
+	//This proc is called before the level loop of DivideOccupations() and will try to select a head,
+	//ignoring ALL non-head preferences for every level until it locates a head or runs out of levels to check
 	proc/FillHeadPosition()
 		for(var/level = 1 to 3)
 			for(var/command_position in command_positions)

@@ -336,14 +336,14 @@
 				var/datum/instrument/instrument = instruments[key]
 				categories |= instrument.category
 
-			var/category = input(usr, "Choose a category") in categories as text|null
+			var/category = input(usr, "Choose a category") in categories
 			var/list/instruments_available = list()
 			for (var/key in instruments)
 				var/datum/instrument/instrument = instruments[key]
 				if (instrument.category == category)
 					instruments_available += key
 
-			var/new_instrument = input(usr, "Choose an instrument") in instruments_available as text|null
+			var/new_instrument = input(usr, "Choose an instrument") in instruments_available
 			if (new_instrument)
 				player.song.instrument_data = instruments[new_instrument]
 
