@@ -41,18 +41,8 @@
 #define PROJECTILE_CONTINUE   -1 //if the projectile should continue flying after calling bullet_act()
 #define PROJECTILE_FORCE_MISS -2 //if the projectile should treat the attack as a miss (suppresses attack and admin logs) - only applies to mobs.
 
-// Some on_mob_life() procs check for alien races.
-#define IS_DIONA  1
-#define IS_VOX    2
-#define IS_SKRELL 3
-#define IS_UNATHI 4
-#define IS_XENOS  5
-#define IS_VAMPIRE 6
-
 #define MAX_GEAR_COST 10 // Used in chargen for accessory loadout limit.
 
-// Chemistry.
-#define CHEM_SYNTH_ENERGY 500 // How much energy does it take to synthesize 1 unit of chemical, in Joules.
 
 #define SPEED_OF_LIGHT       3e8    // Approximate.
 #define SPEED_OF_LIGHT_SQ    9e16
