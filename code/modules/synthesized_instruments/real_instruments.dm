@@ -104,7 +104,7 @@
 				return
 			if(player.song.lines.len > maximum_lines)
 				return
-			if(lentext(newline) > maximum_line_length)
+			if(length(newline) > maximum_line_length)
 				newline = copytext(newline, 1, maximum_line_length)
 			player.song.lines.Add(newline)
 
@@ -123,7 +123,7 @@
 			var/content = html_encode(input("Enter your line: ", src.name, player.song.lines[num]) as text|null)
 			if(!content || !in_range(src, usr))
 				return
-			if(lentext(content) > maximum_line_length)
+			if(length(content) > maximum_line_length)
 				content = copytext(content, 1, maximum_line_length)
 			if(num > player.song.lines.len || num < 1)
 				return
@@ -249,7 +249,7 @@
 				return
 			if(player.song.lines.len > maximum_lines)
 				return
-			if(lentext(newline) > maximum_line_length)
+			if(length(newline) > maximum_line_length)
 				newline = copytext(newline, 1, maximum_line_length)
 			player.song.lines.Add(newline)
 
@@ -268,7 +268,7 @@
 			var/content = html_encode(input("Enter your line: ", src.name, player.song.lines[num]) as text|null)
 			if(!content || !in_range(src, usr))
 				return
-			if(lentext(content) > maximum_line_length)
+			if(length(content) > maximum_line_length)
 				content = copytext(content, 1, maximum_line_length)
 			if(num > player.song.lines.len || num < 1)
 				return

@@ -41,7 +41,7 @@
 	else if(findtext(msg," ")==0)
 		return
 	else
-		/*var/l = lentext(msg)
+		/*var/l = length(msg)
 		if(findtext(msg," ",l,l+1)==0)
 			msg+=" "*/
 		seperate = splittext(msg, " ")

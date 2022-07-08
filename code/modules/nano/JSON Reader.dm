@@ -26,7 +26,7 @@ json_reader
 			src.json = json
 			. = new/list()
 			src.i = 1
-			while(src.i <= lentext(json))
+			while(src.i <= length(json))
 				var/char = get_char()
 				if(is_whitespace(char))
 					i++
@@ -44,7 +44,7 @@ json_reader
 
 		read_word()
 			var/val = ""
-			while(i <= lentext(json))
+			while(i <= length(json))
 				var/char = get_char()
 				if(is_whitespace(char) || symbols.Find(char))
 					i-- // let scanner handle this character
@@ -53,10 +53,9 @@ json_reader
 				i++
 
 		read_string(delim)
-			var
-				escape 	= FALSE
-				val		= ""
-			while(++i <= lentext(json))
+			var/escape 	= FALSE
+			var/val		= ""
+			while(++i <= length(json))
 				var/char = get_char()
 				if(escape)
 					switch(char)
