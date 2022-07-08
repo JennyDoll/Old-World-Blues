@@ -30,8 +30,6 @@
 
 /datum/supply_packs/reagents
 	name = "Chemistry dispenser refill"
-	/datum/supply_packs/reagents
-	name = "Chemistry dispenser refill"
 	contains = list(
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/hydrazine,
 			/obj/item/weapon/reagent_containers/chem_disp_cartridge/lithium,
