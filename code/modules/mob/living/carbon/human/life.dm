@@ -604,6 +604,26 @@
 	breath.update_values()
 	return 1
 
+/mob/living/carbon/human/proc/get_high_body_temperature_damage(var/temperature)
+	if (temperature > species.heat_level_3)
+		return HEAT_DAMAGE_LEVEL_3
+	else if (temperature > species.heat_level_2)
+		return HEAT_DAMAGE_LEVEL_2
+	else if (temperature > species.heat_level_1)
+		return HEAT_DAMAGE_LEVEL_1
+	else
+		return 0
+
+/mob/living/carbon/human/proc/get_low_body_temperature_damage(var/temperature)
+	if (temperature < species.cold_level_3)
+		return COLD_DAMAGE_LEVEL_3
+	else if (temperature < species.cold_level_2)
+		return COLD_DAMAGE_LEVEL_2
+	else if (temperature < species.cold_level_1)
+		return COLD_DAMAGE_LEVEL_1
+	else
+		return 0
+
 /mob/living/carbon/human/handle_environment(datum/gas_mixture/environment)
 	if(!environment)
 		return
@@ -663,7 +683,8 @@
 		//Body temperature is too hot.
 		fire_alert = max(fire_alert, 1)
 		if(status_flags & GODMODE)	return 1	//godmode
-		var/burn_dam = 0
+		var/burn_dam = get_high_body_temperature_damage(bodytemperature)
+		/*
 		switch(bodytemperature)
 			if(species.heat_level_1 to species.heat_level_2)
 				burn_dam = HEAT_DAMAGE_LEVEL_1
@@ -671,24 +692,25 @@
 				burn_dam = HEAT_DAMAGE_LEVEL_2
 			if(species.heat_level_3 to INFINITY)
 				burn_dam = HEAT_DAMAGE_LEVEL_3
+		*/
 		take_overall_damage(burn=burn_dam, used_weapon = "High Body Temperature")
-		fire_alert = max(fire_alert, 2)
+		//fire_alert = max(fire_alert, 2)
 
 	else if(bodytemperature <= species.cold_level_1)
 		fire_alert = max(fire_alert, 1)
 		if(status_flags & GODMODE)	return 1	//godmode
 
 		if(!istype(loc, /obj/machinery/atmospherics/unary/cryo_cell))
-			var/burn_dam = 0
-			switch(bodytemperature)
+			var/burn_dam = get_low_body_temperature_damage(bodytemperature)
+			/* switch(bodytemperature)
 				if(species.cold_level_1 to species.cold_level_2)
 					burn_dam = COLD_DAMAGE_LEVEL_1
 				if(species.cold_level_2 to species.cold_level_3)
 					burn_dam = COLD_DAMAGE_LEVEL_2
 				if(species.cold_level_3 to -INFINITY)
-					burn_dam = COLD_DAMAGE_LEVEL_3
+					burn_dam = COLD_DAMAGE_LEVEL_3 */
 			take_overall_damage(burn=burn_dam, used_weapon = "Low Body Temperature")
-			fire_alert = max(fire_alert, 1)
+			//fire_alert = max(fire_alert, 1)
 
 	// Account for massive pressure differences.  Done by Polymorph
 	// Made it possible to actually have something that can protect against high pressure... Done by Errorage. Polymorph now has an axe sticking from his head for his previous hardcoded nonsense!
